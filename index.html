@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Flood WASH Campaign Register — PHED &amp; UNICEF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            /* ---- Field-register palette with blue accent ---- */
+            --ink: #16241f;
+            --ink-soft: #3d4d46;
+            --paper: #f2f4ee;
+            --card: #fdfdfb;
+            --cover: #0b2f2c;
+            --cover-soft: #10403c;
+            --cover-text: #cfe0d6;
+            --cover-text-dim: #7fa093;
+            --primary: #0b6b5f;
+            --primary-deep: #084c43;
+            --accent-blue: #1261A0;
+            --accent-blue-light: #1a7cc4;
+            --clay: #b6653a;
+            --clay-soft: #eddccc;
+            --slate: #4d6f8a;
+            --moss: #5c7a4f;
+            --line: #d9dccd;
+            --line-strong: #b9c0ac;
+            --shadow-sm: 0 1px 2px rgba(11, 47, 44, 0.06);
+            --shadow: 0 2px 10px rgba(11, 47, 44, 0.07);
+            --radius-sm: 3px;
+            --radius: 5px;
+            --serif: 'Source Serif 4', Georgia, serif;
+            --sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+            --transition: 0.18s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--paper);
+            color: var(--ink);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection { background: var(--clay-soft); color: var(--ink); }
+
+        /* ============ SIDEBAR — "register cover" ============ */
+        .sidebar {
+            width: 264px;
+            background: linear-gradient(135deg, var(--primary-deep) 0%, var(--accent-blue) 100%);
+            color: var(--cover-text);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            transition: transform var(--transition);
+            background-image: linear-gradient(135deg, rgba(8, 76, 67, 0.95) 0%, rgba(18, 97, 160, 0.95) 100%), linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.08) 100%);
+        }
+
+        .sidebar-header {
+            padding: 28px 24px 22px;
+            border-bottom: 1px solid rgba(207, 224, 214, 0.14);
+        }
+
+        .sidebar-eyebrow {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--cover-text-dim);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-title {
+            font-family: var(--serif);
+            font-size: 19px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.28;
+            letter-spacing: 0.2px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 11px;
+            color: var(--cover-text-dim);
+            font-weight: 500;
+            margin-top: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 18px 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-nav-label {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--cover-text-dim);
+            padding: 4px 12px 8px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--cover-text);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all var(--transition);
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            border-left: 2px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            font-weight: 600;
+            border-left: 2px solid #ffd700;
+        }
+
+        .sidebar-nav a .nav-icon {
+            font-size: 15px;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(207, 224, 214, 0.14);
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: var(--cover-text-dim);
+            line-height: 1.6;
+        }
+
+        .sidebar-footer strong { color: var(--cover-text); }
+
+        /* ============ MAIN ============ */
+        .main-content {
+            margin-left: 264px;
+            flex: 1;
+            padding: 30px 34px 50px;
+            min-width: 0;
+            transition: margin-left var(--transition);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 26px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--line-strong);
+        }
+
+        .topbar-left h1 {
+            font-family: var(--serif);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            letter-spacing: -0.2px;
+        }
+
+        .topbar-left .breadcrumb {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--ink-soft);
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .topbar-right {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line-strong);
+            background: var(--card);
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            color: var(--ink);
+        }
+
+        .btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-blue-light);
+            border-color: var(--accent-blue-light);
+            color: #fff;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 6px 10px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+        }
+
+        .date-filter label {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            font-weight: 500;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .date-filter input[type="date"] {
+            padding: 5px 8px;
+            border-radius: 3px;
+            border: 1px solid var(--line);
+            font-size: 12.5px;
+            font-family: var(--mono);
+            background: #fff;
+            color: var(--ink);
+            transition: all var(--transition);
+        }
+
+        .date-filter input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            font-family: var(--mono);
+        }
+
+        .badge-info {
+            background: rgba(18, 97, 160, 0.12);
+            color: var(--accent-blue);
+            border: 1px solid rgba(18, 97, 160, 0.25);
+        }
+
+        /* ============ KPI STRIP — "verification tabs" ============ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1px;
+            margin-bottom: 30px;
+            background: var(--line-strong);
+            border: 1px solid var(--line-strong);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-card {
+            background: var(--card);
+            padding: 20px 22px;
+            position: relative;
+            transition: background var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .kpi-card:hover { 
+            background: #fff;
+            border-left-color: var(--accent-blue);
+        }
+
+        .kpi-card::before {
+            content: attr(data-mark);
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            font-family: var(--mono);
+            font-size: 9.5px;
+            letter-spacing: 1px;
+            color: var(--line-strong);
+            border: 1px solid var(--line-strong);
+            border-radius: 20px;
+            padding: 2px 7px;
+        }
+
+        .kpi-value {
+            font-family: var(--mono);
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--ink);
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: var(--ink-soft);
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .kpi-sub {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: #8a9187;
+            margin-top: 3px;
+        }
+
+        .kpi-card.accent-teal .kpi-value { color: var(--primary-deep); }
+        .kpi-card.accent-slate .kpi-value { color: var(--accent-blue); }
+        .kpi-card.accent-clay .kpi-value { color: var(--clay); }
+        .kpi-card.accent-moss .kpi-value { color: var(--moss); }
+
+        /* ============ SECTION HEADINGS ============ */
+        .section-heading {
+            font-family: var(--serif);
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--ink);
+            margin: 8px 0 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .section-heading .eyebrow {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-blue) 0%, transparent 100%);
+            margin-left: 6px;
+        }
+
+        /* ============ CHARTS ============ */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px 20px 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--accent-blue);
+        }
+
+        .chart-card.full-width { grid-column: 1 / -1; }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .chart-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.1px;
+        }
+
+        .chart-subtitle {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: var(--ink-soft);
+            margin-top: 2px;
+        }
+
+        .chart-card canvas { width: 100% !important; max-height: 320px; }
+
+        .chart-card.pie-chart canvas {
+            max-height: 270px;
+            max-width: 270px;
+            margin: 0 auto;
+        }
+
+        /* ============ TABLE ============ */
+        .table-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--accent-blue);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table-title { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+
+        .search-box {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--line-strong);
+            font-size: 12.5px;
+            font-family: var(--sans);
+            width: 230px;
+            background: var(--paper);
+            transition: all var(--transition);
+            color: var(--ink);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: #fff;
+            width: 270px;
+            box-shadow: 0 0 0 3px rgba(18, 97, 160, 0.1);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 450px;
+            overflow-y: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line);
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1300px; font-family: var(--mono); }
+
+        thead { position: sticky; top: 0; z-index: 10; }
+
+        thead th {
+            background: linear-gradient(135deg, rgba(8, 76, 67, 0.08) 0%, rgba(18, 97, 160, 0.08) 100%);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--accent-blue);
+            border-bottom: 2px solid var(--accent-blue);
+            white-space: nowrap;
+            font-family: var(--mono);
+        }
+
+        tbody td {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+            color: var(--ink);
+        }
+
+        tbody tr:hover { background: rgba(18, 97, 160, 0.05); }
+        tbody tr:nth-child(even) { background: #f7f8f2; }
+        tbody tr:nth-child(even):hover { background: rgba(18, 97, 160, 0.08); }
+
+        .no-data { text-align: center; padding: 40px; color: #97a08f; font-size: 13px; font-family: var(--sans); }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            color: var(--ink);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 47, 44, 0.45);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.show { display: block; }
+
+        .multimedia-link {
+            display: inline-block;
+            padding: 3px 9px;
+            background: rgba(18, 97, 160, 0.1);
+            color: var(--accent-blue);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+            font-family: var(--mono);
+            transition: all var(--transition);
+            border: 1px solid rgba(18, 97, 160, 0.25);
+        }
+
+        .multimedia-link:hover {
+            background: rgba(18, 97, 160, 0.18);
+            border-color: var(--accent-blue);
+        }
+
+        .multimedia-unavailable {
+            color: #a3aa9c;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: var(--mono);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .chart-grid { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            .sidebar, .topbar-right, .menu-toggle, .btn { display: none; }
+            .main-content { margin-left: 0; padding: 0; }
+            .chart-card, .kpi-card, .table-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+            #data-table-section, .table-card { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-eyebrow">Field Register · No. 001</div>
+            <div class="sidebar-title">Post-Flood WASH Campaign Monitor</div>
+            <div class="sidebar-subtitle">PHED &amp; UNICEF — Charaideo District Recovery Programme</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-label">Contents</div>
+            <a href="#overview" class="active" onclick="scrollToSection('overview'); setActive(this);"><span class="nav-icon">◆</span> Overview</a>
+            <a href="#demographics" onclick="scrollToSection('demographics'); setActive(this);"><span class="nav-icon">◆</span> Demographics</a>
+            <a href="#topics" onclick="scrollToSection('topics'); setActive(this);"><span class="nav-icon">◆</span> Campaign Topics</a>
+            <a href="#wards" onclick="scrollToSection('wards'); setActive(this);"><span class="nav-icon">◆</span> Geographical Analysis</a>
+            <a href="#data-table-section" onclick="scrollToSection('data-table-section'); setActive(this);"><span class="nav-icon">◆</span> Data Table</a>
+        </nav>
+        <div class="sidebar-footer">
+            &copy; 2025 Monitoring Dashboard<br>
+            Last updated: <strong id="lastUpdated">--</strong>
+        </div>
+    </aside>
+
+    <div class="main-content" id="mainContent">
+        <div class="topbar">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+                <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+                <div class="topbar-left">
+                    <h1>Post-Flood Campaign Monitoring Dashboard</h1>
+                    <div class="breadcrumb">HOME / DASHBOARD / CAMPAIGN ANALYTICS</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="date-filter">
+                    <label>From</label>
+                    <input type="date" id="dateFrom" onchange="applyDateFilter()">
+                    <label>To</label>
+                    <input type="date" id="dateTo" onchange="applyDateFilter()">
+                </div>
+                <button class="btn btn-sm" onclick="resetFilters()">↺ Reset</button>
+                <button class="btn btn-sm" onclick="printDashboard()">⎙ Print</button>
+                <button class="btn btn-sm" onclick="exportToCSV()">⇩ Export CSV</button>
+                <button class="btn btn-primary btn-sm" id="fetchSheetBtn" onclick="fetchFromGoogleSheet()">⟳ Fetch from Sheet</button>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card accent-teal" data-mark="A">
+                <div class="kpi-value" id="kpiTotalCampaigns">0</div>
+                <div class="kpi-label">Total Campaigns</div>
+                <div class="kpi-sub">Across all wards &amp; GPs</div>
+            </div>
+            <div class="kpi-card accent-slate" data-mark="B">
+                <div class="kpi-value" id="kpiTotalParticipants">0</div>
+                <div class="kpi-label">Total Participants</div>
+                <div class="kpi-sub">Cumulative reach</div>
+            </div>
+            <div class="kpi-card accent-clay" data-mark="C">
+                <div class="kpi-value" id="kpiAvgParticipants">0</div>
+                <div class="kpi-label">Avg Participants / Campaign</div>
+                <div class="kpi-sub">Mean attendance</div>
+            </div>
+            <div class="kpi-card accent-moss" data-mark="D">
+                <div class="kpi-value" id="kpiGenderRatio">0</div>
+                <div class="kpi-label">Gender Ratio</div>
+                <div class="kpi-sub">Females per 100 Males</div>
+            </div>
+        </div>
+
+        <div class="section-heading" id="overview"><span class="eyebrow">01</span> Overview &amp; Trends</div>
+        <div class="chart-grid">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Campaigns Over Time</div>
+                        <div class="chart-subtitle">NUMBER OF CAMPAIGNS CONDUCTED PER MONTH</div>
+                    </div>
+                </div>
+                <canvas id="chartTimeline" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="section-heading" id="demographics"><span class="eyebrow">02</span> Demographic Breakdown</div>
+        <div class="chart-grid">
+            <div class="chart-card pie-chart">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Gender Distribution</div>
+                        <div class="chart-subtitle">MALE VS FEMALE PARTICIPANTS</div>
+                    </div>
+                </div>
+                <canvas id="chartGender" height="240"></canvas>
+            </div>
+            <div class="chart-card pie-chart">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Age Group Distribution</div>
+                        <div class="chart-subtitle">CHILDREN, ADOLESCENTS, ADULTS &amp; ELDERLY</div>
+                    </div>
+                </div>
+                <canvas id="chartAgeGroups" height="240"></canvas>
+            </div>
+        </div>
+
+        <div class="section-heading" id="topics"><span class="eyebrow">03</span> Campaign Topics &amp; Ward Analysis</div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Campaign Topics Covered</div>
+                        <div class="chart-subtitle">DISTRIBUTION BY TOPIC</div>
+                    </div>
+                </div>
+                <canvas id="chartTopics" height="280"></canvas>
+            </div>
+            <div class="chart-card" id="wards">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Participants by Ward</div>
+                        <div class="chart-subtitle">TOTAL PARTICIPANTS PER WARD</div>
+                    </div>
+                </div>
+                <canvas id="chartWards" height="280"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Gram Panchayat-wise Distribution</div>
+                        <div class="chart-subtitle">CAMPAIGNS &amp; PARTICIPANTS BY GP</div>
+                    </div>
+                </div>
+                <canvas id="chartGP" height="220"></canvas>
+            </div>
+        </div>
+
+        <div class="section-heading" id="data-table-section"><span class="eyebrow">04</span> Detailed Campaign Records</div>
+        <div class="table-card">
+            <div class="table-header">
+                <span class="table-title">All Campaign Entries</span>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span style="font-family:var(--mono);font-size:10.5px;color:#8a9187;" id="recordCount">0 records</span>
+                    <input type="text" class="search-box" id="tableSearch" placeholder="Search records…" oninput="filterTable()">
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                     <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Timestamp</th>
+                            <th>Date of Campaign</th>
+                            <th>Name of GP</th>
+                            <th>Ward No</th>
+                            <th>Location</th>
+                            <th>Campaign Topics</th>
+                            <th>Total Participants</th>
+                            <th>Male</th>
+                            <th>Female</th>
+                            <th>Children (0-12)</th>
+                            <th>Adolescents (13-19)</th>
+                            <th>Adults (20-59)</th>
+                            <th>Elderly (60+)</th>
+                            <th>Photos</th>
+                            <th>Videos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="16" class="no-data">No data yet. Click <strong>"Fetch from Sheet"</strong> to load data from your Google Sheet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let charts = {};
+
+        function initDashboard(data) {
+            allData = [...data];
+            if (data.length > 0) {
+                const dates = data.map(d => d.dateOfCampaign).sort();
+                document.getElementById('dateFrom').value = dates[0];
+                document.getElementById('dateTo').value = dates[dates.length - 1];
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-IN', {
+                    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+            }
+            applyDateFilter();
+        }
+
+        function applyDateFilter() {
+            const from = document.getElementById('dateFrom').value;
+            const to = document.getElementById('dateTo').value;
+            filteredData = [...allData];
+            if (from) filteredData = filteredData.filter(d => d.dateOfCampaign >= from);
+            if (to) filteredData = filteredData.filter(d => d.dateOfCampaign <= to);
+            updateAllVisuals();
+        }
+
+        function resetFilters() {
+            if (allData.length > 0) {
+                const dates = allData.map(d => d.dateOfCampaign).sort();
+                document.getElementById('dateFrom').value = dates[0];
+                document.getElementById('dateTo').value = dates[dates.length - 1];
+            }
+            document.getElementById('tableSearch').value = '';
+            applyDateFilter();
+        }
+
+        function updateAllVisuals() {
+            updateKPIs();
+            updateTimelineChart();
+            updateGenderChart();
+            updateAgeGroupsChart();
+            updateTopicsChart();
+            updateWardsChart();
+            updateGPChart();
+            renderTable(filteredData);
+            document.getElementById('recordCount').textContent = `${filteredData.length} record${filteredData.length !== 1 ? 's' : ''}`;
+        }
+
+        function updateKPIs() {
+            const totalCampaigns = filteredData.length;
+            const totalParticipants = filteredData.reduce((sum, d) => sum + d.totalParticipants, 0);
+            const avgParticipants = totalCampaigns > 0 ? Math.round(totalParticipants / totalCampaigns) : 0;
+            const totalMales = filteredData.reduce((sum, d) => sum + d.male, 0);
+            const totalFemales = filteredData.reduce((sum, d) => sum + d.female, 0);
+            const genderRatio = totalMales > 0 ? Math.round((totalFemales / totalMales) * 100) : 0;
+            animateValue('kpiTotalCampaigns', totalCampaigns);
+            animateValue('kpiTotalParticipants', totalParticipants);
+            animateValue('kpiAvgParticipants', avgParticipants);
+            animateValue('kpiGenderRatio', genderRatio);
+        }
+
+        function animateValue(elementId, targetValue) {
+            const el = document.getElementById(elementId);
+            const currentVal = parseInt(el.textContent.replace(/[^0-9]/g, '')) || 0;
+            if (currentVal === targetValue && el.textContent !== '0') return;
+            const duration = 500;
+            const startTime = performance.now();
+            const startVal = currentVal;
+            function step(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(startVal + (targetValue - startVal) * eased);
+                el.textContent = current.toLocaleString('en-IN');
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = targetValue.toLocaleString('en-IN');
+            }
+            requestAnimationFrame(step);
+        }
+
+        function destroyChart(key) { if (charts[key]) { charts[key].destroy(); charts[key] = null; } }
+
+        // ---- Field-register chart palette ----
+        const PALETTE = {
+            teal: '#0b6b5f', tealDeep: '#084c43', clay: '#b6653a', slate: '#4d6f8a',
+            moss: '#5c7a4f', amber: '#c99a3c', plum: '#7a5468', ink: '#16241f',
+            line: '#d9dccd'
+        };
+        Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+        Chart.defaults.color = '#3d4d46';
+        Chart.defaults.borderColor = '#e7e9df';
+
+        function updateTimelineChart() {
+            destroyChart('timeline');
+            const monthlyData = {};
+            filteredData.forEach(d => {
+                const monthKey = d.dateOfCampaign.substring(0, 7);
+                if (!monthlyData[monthKey]) monthlyData[monthKey] = 0;
+                monthlyData[monthKey]++;
+            });
+            const sortedKeys = Object.keys(monthlyData).sort();
+            const labels = sortedKeys.map(k => {
+                const [y, m] = k.split('-');
+                return new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+            });
+            const values = sortedKeys.map(k => monthlyData[k]);
+            const ctx = document.getElementById('chartTimeline').getContext('2d');
+            charts['timeline'] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Campaigns', data: values, borderColor: PALETTE.tealDeep, backgroundColor: 'rgba(11,107,95,0.08)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: PALETTE.tealDeep, pointBorderColor: '#fff', pointBorderWidth: 2, pointHoverRadius: 8, borderWidth: 3 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true } } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function updateGenderChart() {
+            destroyChart('gender');
+            const totalMale = filteredData.reduce((s, d) => s + d.male, 0);
+            const totalFemale = filteredData.reduce((s, d) => s + d.female, 0);
+            const ctx = document.getElementById('chartGender').getContext('2d');
+            charts['gender'] = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['Male', 'Female'], datasets: [{ data: [totalMale, totalFemale], backgroundColor: [PALETTE.slate, PALETTE.clay], borderColor: '#fff', borderWidth: 3 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }, cutout: '60%' }
+            });
+        }
+
+        function updateAgeGroupsChart() {
+            destroyChart('ageGroups');
+            const children = filteredData.reduce((s, d) => s + d.children, 0);
+            const adolescents = filteredData.reduce((s, d) => s + d.adolescents, 0);
+            const adults = filteredData.reduce((s, d) => s + d.adults, 0);
+            const elderly = filteredData.reduce((s, d) => s + d.elderly, 0);
+            const ctx = document.getElementById('chartAgeGroups').getContext('2d');
+            charts['ageGroups'] = new Chart(ctx, {
+                type: 'pie',
+                data: { labels: ['Children (0-12)', 'Adolescents (13-19)', 'Adults (20-59)', 'Elderly (60+)'], datasets: [{ data: [children, adolescents, adults, elderly], backgroundColor: [PALETTE.amber, PALETTE.plum, PALETTE.teal, '#8a9187'], borderColor: '#fff', borderWidth: 3 }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } } }
+            });
+        }
+
+        function updateTopicsChart() {
+            destroyChart('topics');
+            const topicCounts = {};
+            filteredData.forEach(d => { const topic = d.campaignTopics || 'Unspecified'; topicCounts[topic] = (topicCounts[topic] || 0) + 1; });
+            const sorted = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]);
+            const labels = sorted.map(e => e[0]);
+            const values = sorted.map(e => e[1]);
+            const colors = [PALETTE.teal, PALETTE.clay, PALETTE.slate, PALETTE.amber, PALETTE.plum, PALETTE.moss, PALETTE.tealDeep, '#8a9187', '#a8794f', '#6c8fa8', '#9b7a8f', '#7e9a6c'];
+            const ctx = document.getElementById('chartTopics').getContext('2d');
+            charts['topics'] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'Campaigns', data: values, backgroundColor: labels.map((_, i) => colors[i % colors.length]), borderRadius: 3 }] },
+                options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+        }
+
+        function updateWardsChart() {
+            destroyChart('wards');
+            const wardParticipants = {};
+            filteredData.forEach(d => { const ward = `Ward ${d.wardNo}`; wardParticipants[ward] = (wardParticipants[ward] || 0) + d.totalParticipants; });
+            const sorted = Object.entries(wardParticipants).sort((a, b) => parseInt(a[0].replace('Ward ', '')) - parseInt(b[0].replace('Ward ', '')));
+            const ctx = document.getElementById('chartWards').getContext('2d');
+            charts['wards'] = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: sorted.map(e => e[0]), datasets: [{ label: 'Participants', data: sorted.map(e => e[1]), backgroundColor: 'rgba(11,107,95,0.7)', borderColor: PALETTE.tealDeep, borderWidth: 1, borderRadius: 3 }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function updateGPChart() {
+            destroyChart('gp');
+            const gpData = {};
+            filteredData.forEach(d => {
+                const gp = d.nameOfGP || 'Unknown GP';
+                if (!gpData[gp]) gpData[gp] = { campaigns: 0, participants: 0 };
+                gpData[gp].campaigns++;
+                gpData[gp].participants += d.totalParticipants;
+            });
+            const sorted = Object.entries(gpData).sort((a, b) => b[1].participants - a[1].participants);
+            const ctx = document.getElementById('chartGP').getContext('2d');
+            charts['gp'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(e => e[0]),
+                    datasets: [
+                        { label: 'Campaigns', data: sorted.map(e => e[1].campaigns), backgroundColor: 'rgba(11,107,95,0.7)', borderColor: PALETTE.tealDeep, borderWidth: 1, borderRadius: 3, order: 1 },
+                        { label: 'Participants (÷10)', data: sorted.map(e => Math.round(e[1].participants / 10)), backgroundColor: 'rgba(182,101,58,0.6)', borderColor: PALETTE.clay, borderWidth: 1, borderRadius: 3, order: 2 }
+                    ]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            const searchTerm = (document.getElementById('tableSearch')?.value || '').toLowerCase();
+            let displayData = searchTerm ? data.filter(d => Object.values(d).join(' ').toLowerCase().includes(searchTerm)) : data;
+            if (displayData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="16" class="no-data">No records found.</td></tr>`;
+                document.getElementById('recordCount').textContent = '0 records';
+                return;
+            }
+            document.getElementById('recordCount').textContent = `${displayData.length} record${displayData.length !== 1 ? 's' : ''}${searchTerm ? ' (filtered)' : ''}`;
+            tbody.innerHTML = displayData.map((d, i) => {
+                const ts = d.timestamp ? new Date(d.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--';
+                const campaignDate = d.dateOfCampaign ? new Date(d.dateOfCampaign).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '--';
+
+                const photoLink = d.photographs ? `<a href="${d.photographs}" target="_blank" class="multimedia-link" title="View Photos">📷 View</a>` : '<span class="multimedia-unavailable">❌ N/A</span>';
+                const videoLink = d.videos ? `<a href="${d.videos}" target="_blank" class="multimedia-link" title="View Videos">🎥 View</a>` : '<span class="multimedia-unavailable">❌ N/A</span>';
+
+                return `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${ts}</td>
+                        <td>${campaignDate}</td>
+                        <td>${d.nameOfGP || '--'}</td>
+                        <td><strong>Ward ${d.wardNo}</strong></td>
+                        <td>${d.enterLocation || '--'}</td>
+                        <td><span class="badge badge-info">${d.campaignTopics || '--'}</span></td>
+                        <td><strong>${(d.totalParticipants || 0).toLocaleString('en-IN')}</strong></td>
+                        <td>${(d.male || 0).toLocaleString('en-IN')}</td>
+                        <td>${(d.female || 0).toLocaleString('en-IN')}</td>
+                        <td>${(d.children || 0).toLocaleString('en-IN')}</td>
+                        <td>${(d.adolescents || 0).toLocaleString('en-IN')}</td>
+                        <td>${(d.adults || 0).toLocaleString('en-IN')}</td>
+                        <td>${(d.elderly || 0).toLocaleString('en-IN')}</td>
+                        <td>${photoLink}</td>
+                        <td>${videoLink}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function filterTable() { renderTable(filteredData); }
+
+        function parseCSVData(results) {
+            return results.data.map(row => {
+                const getVal = (key) => row[key] || Object.entries(row).find(([k]) => k.trim() === key)?.[1] || '';
+                const total = parseInt(getVal('Total Number of Participants')) || 0;
+                return {
+                    timestamp: getVal('Timestamp'),
+                    wardNo: parseInt(getVal('Ward No')) || 0,
+                    dateOfCampaign: getVal('Date of Campaign'),
+                    campaignTopics: getVal('Campaign Topics Covered'),
+                    totalParticipants: total,
+                    male: parseInt(getVal('Male')) || 0,
+                    female: parseInt(getVal('Female')) || 0,
+                    children: parseInt(getVal('Children (0-12)')) || 0,
+                    adolescents: parseInt(getVal('Adolescents (13-19)')) || 0,
+                    adults: parseInt(getVal('Adults (20-59)')) || 0,
+                    elderly: parseInt(getVal('Elderly (60+)')) || 0,
+                    photographs: getVal('Photographs'),
+                    videos: getVal('Videos'),
+                    deputedLocation: getVal('Where are you deputed?'),
+                    nameOfGP: getVal('Name of GP'),
+                    enterLocation: getVal('Enter Location')
+                };
+            }).filter(d => d.dateOfCampaign && d.totalParticipants > 0);
+        }
+
+        function fetchFromGoogleSheet() {
+            const btn = document.getElementById('fetchSheetBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Fetching...';
+            btn.disabled = true;
+
+            const spreadsheetId = '19dbwpEkMKPIGN0CserHZOS3SvLKCekeMPI6_1rW2B5g';
+            const gid = '1882732563';
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
+
+            fetch(csvUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.text();
+                })
+                .then(csvText => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            const parsed = parseCSVData(results);
+                            if (parsed.length === 0) {
+                                alert('⚠️ No data found. The sheet might be empty or not accessible.');
+                            } else {
+                                initDashboard(parsed);
+                                console.log(`✅ Successfully loaded ${parsed.length} records from Google Sheets!`);
+                            }
+                        },
+                        error: () => alert('❌ Failed to parse CSV.')
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    console.error('❌ Could not fetch sheet.');
+                })
+                .finally(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        }
+
+        function setActive(el) {
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            el.classList.add('active');
+            if (window.innerWidth <= 1024) setTimeout(closeSidebar, 200);
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function printDashboard() {
+            const printWindow = window.open('', '', 'width=1400,height=900');
+            const printDoc = printWindow.document;
+
+            const styles = `
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+                    body { font-family: 'Inter', Arial, sans-serif; background: #f2f4ee; color: #16241f; padding: 15mm; line-height: 1.4; }
+                    @page { size: A4; margin: 15mm; }
+                    .print-header { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #0b6b5f; padding-bottom: 12px; page-break-after: avoid; }
+                    .print-header h1 { font-family: 'Source Serif 4', Georgia, serif; font-size: 24px; color: #084c43; margin-bottom: 4px; }
+                    .print-header p { color: #3d4d46; font-size: 12px; font-family: 'IBM Plex Mono', monospace; }
+                    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; page-break-inside: avoid; }
+                    .kpi-card { background: #fdfdfb; padding: 12px; border: 1px solid #d9dccd; border-radius: 4px; text-align: center; }
+                    .kpi-value { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: #084c43; }
+                    .kpi-label { font-size: 11px; color: #3d4d46; margin-top: 4px; font-weight: 600; }
+                    .section-heading { font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 700; color: #16241f; margin: 18px 0 12px 0; border-left: 4px solid #0b6b5f; padding-left: 10px; page-break-after: avoid; }
+                    .chart-container { margin-bottom: 18px; page-break-inside: avoid; background: #fdfdfb; padding: 10px; border: 1px solid #d9dccd; border-radius: 4px; }
+                    .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
+                    canvas { max-width: 100%; height: auto; display: block; }
+                    @media print {
+                        body { padding: 15mm; background: #fff; }
+                        .print-header { page-break-after: avoid; }
+                        .section-heading { page-break-after: avoid; }
+                        .chart-container { page-break-inside: avoid; }
+                        .kpi-grid { page-break-inside: avoid; }
+                    }
+                </style>
+            `;
+
+            const reportDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+            const reportTime = new Date().toLocaleTimeString('en-IN');
+
+            const content = `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Campaign Monitoring Dashboard</title>
+                </head>
+                <body>
+                    ${styles}
+                    <div class="print-header">
+                        <h1>Post-Flood Campaign Monitoring Dashboard</h1>
+                        <p>Report Generated: ${reportDate} at ${reportTime}</p>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-value">${document.getElementById('kpiTotalCampaigns').textContent}</div>
+                            <div class="kpi-label">Total Campaigns</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-value">${document.getElementById('kpiTotalParticipants').textContent}</div>
+                            <div class="kpi-label">Total Participants</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-value">${document.getElementById('kpiAvgParticipants').textContent}</div>
+                            <div class="kpi-label">Avg Participants</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-value">${document.getElementById('kpiGenderRatio').textContent}</div>
+                            <div class="kpi-label">Gender Ratio</div>
+                        </div>
+                    </div>
+
+                    <div class="section-heading">Overview &amp; Trends</div>
+                    <div class="chart-container">
+                        <canvas id="printChartTimeline"></canvas>
+                    </div>
+
+                    <div class="section-heading">Demographic Breakdown</div>
+                    <div class="chart-grid">
+                        <div class="chart-container"><canvas id="printChartGender"></canvas></div>
+                        <div class="chart-container"><canvas id="printChartAgeGroups"></canvas></div>
+                    </div>
+
+                    <div class="section-heading">Campaign Topics &amp; Geographical Analysis</div>
+                    <div class="chart-grid">
+                        <div class="chart-container"><canvas id="printChartTopics"></canvas></div>
+                        <div class="chart-container"><canvas id="printChartWards"></canvas></div>
+                    </div>
+                </body>
+                </html>`;
+
+            printDoc.write(content);
+            printDoc.close();
+
+            setTimeout(() => {
+                const renderChart = (sourceChart, canvasId, width, height) => {
+                    if (!sourceChart) return;
+                    try {
+                        const img = sourceChart.canvas.toDataURL('image/png');
+                        const canvasEl = printDoc.getElementById(canvasId);
+                        if (canvasEl) {
+                            canvasEl.width = width;
+                            canvasEl.height = height;
+                            const ctx = canvasEl.getContext('2d');
+                            const imgObj = new Image();
+                            imgObj.onload = () => { ctx.drawImage(imgObj, 0, 0, width, height); };
+                            imgObj.src = img;
+                        }
+                    } catch (e) {
+                        console.error('Error rendering chart:', e);
+                    }
+                };
+
+                renderChart(charts['timeline'], 'printChartTimeline', 600, 200);
+                renderChart(charts['gender'], 'printChartGender', 280, 220);
+                renderChart(charts['ageGroups'], 'printChartAgeGroups', 280, 220);
+                renderChart(charts['topics'], 'printChartTopics', 280, 220);
+                renderChart(charts['wards'], 'printChartWards', 280, 220);
+
+                setTimeout(() => { printWindow.print(); }, 800);
+            }, 500);
+        }
+
+        function exportToCSV() {
+            if (filteredData.length === 0) {
+                alert('⚠️ No data to export. Please fetch data from Google Sheet first.');
+                return;
+            }
+
+            const headers = ['#', 'Timestamp', 'Date of Campaign', 'Name of GP', 'Ward No', 'Location', 'Campaign Topics', 'Total Participants', 'Male', 'Female', 'Children (0-12)', 'Adolescents (13-19)', 'Adults (20-59)', 'Elderly (60+)', 'Photos URL', 'Videos URL'];
+
+            const rows = filteredData.map((d, i) => [
+                i + 1,
+                d.timestamp ? new Date(d.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '--',
+                d.dateOfCampaign ? new Date(d.dateOfCampaign).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '--',
+                d.nameOfGP || '--',
+                d.wardNo || '--',
+                d.enterLocation || '--',
+                d.campaignTopics || '--',
+                d.totalParticipants || 0,
+                d.male || 0,
+                d.female || 0,
+                d.children || 0,
+                d.adolescents || 0,
+                d.adults || 0,
+                d.elderly || 0,
+                d.photographs || '--',
+                d.videos || '--'
+            ]);
+
+            let csvContent = '';
+            csvContent += headers.map(h => `"${h.replace(/"/g, '""')}"`).join(',') + '\n';
+            csvContent += rows.map(row =>
+                row.map(cell => {
+                    const cellStr = String(cell);
+                    if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+                        return `"${cellStr.replace(/"/g, '""')}"`;
+                    }
+                    return `"${cellStr}"`;
+                }).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `campaign_records_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            console.log(`✅ Exported ${filteredData.length} records to CSV`);
+            alert(`✅ Successfully exported ${filteredData.length} campaign records to CSV!`);
+        }
+
+        // Auto-fetch data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔄 Auto-fetching data from Google Sheet...');
+            fetchFromGoogleSheet();
+        });
+    </script>
+</body>
+</html>
